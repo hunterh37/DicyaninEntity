@@ -4,7 +4,7 @@ A custom RealityKit entity package for visionOS applications that provides a sop
 
 ## Requirements
 
-- iOS 17.0+ / visionOS 1.0+
+- visionOS 1.0+
 - Xcode 15.0+
 - Swift 5.9+
 
