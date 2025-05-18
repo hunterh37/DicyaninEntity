@@ -8,6 +8,7 @@
 
 import RealityKit
 import simd
+import UIKit
 
 public extension DicyaninEntity {
     
@@ -57,18 +58,6 @@ public extension DicyaninEntity {
         self.applyMaterial(material)
     }
     
-    /// Makes the entity look at a specific point in space
-    func lookAt(_ target: SIMD3<Float>, up: SIMD3<Float> = SIMD3<Float>(0, 1, 0)) {
-        let direction = normalize(target - self.transform.translation)
-        let rotation = simd_quatf(from: SIMD3<Float>(0, 0, -1), to: direction, up: up)
-        self.transform.rotation = rotation
-    }
-    
-    /// Returns the distance to another entity
-    func distance(to entity: Entity) -> Float {
-        return distance(self.transform.translation, entity.transform.translation)
-    }
-    
     /// Returns the direction vector pointing to another entity
     func direction(to entity: Entity) -> SIMD3<Float> {
         return normalize(entity.transform.translation - self.transform.translation)
@@ -94,25 +83,5 @@ public extension DicyaninEntity {
     func removePhysics() {
         self.components[CollisionComponent.self] = nil
         self.components[PhysicsBodyComponent.self] = nil
-    }
-    
-    /// Applies an impulse force to the entity
-    func applyImpulse(_ force: SIMD3<Float>, at point: SIMD3<Float>? = nil) {
-        guard let physicsBody = self.components[PhysicsBodyComponent.self] else { return }
-        if let point = point {
-            physicsBody.applyImpulse(force, at: point)
-        } else {
-            physicsBody.applyImpulse(force)
-        }
-    }
-    
-    /// Applies a continuous force to the entity
-    func applyForce(_ force: SIMD3<Float>, at point: SIMD3<Float>? = nil) {
-        guard let physicsBody = self.components[PhysicsBodyComponent.self] else { return }
-        if let point = point {
-            physicsBody.applyForce(force, at: point)
-        } else {
-            physicsBody.applyForce(force)
-        }
     }
 } 
