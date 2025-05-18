@@ -26,9 +26,8 @@ public class DicyaninEntity: Entity {
     
     /// Initialize with default settings (white cube)
     public required init() {
-        self.modelComponent = ModelComponent(mesh: .generateBox(size: 0.1), materials: [SimpleMaterial(color: .white, isMetallic: false)])
+        self.modelComponent = ModelComponent(mesh: .generateBox(size: 0.0001), materials: [SimpleMaterial(color: .clear, isMetallic: false)])
         super.init()
-        self.components[ModelComponent.self] = modelComponent
     }
     
     /// Initialize with a custom mesh and material
