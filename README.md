@@ -16,13 +16,13 @@ Add the following to your `Package.swift` file:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/yourusername/DicyaninEntity.git", from: "1.0.0")
+    .package(url: "https://github.com/hunterh37/DicyaninEntity.git", from: "1.0.0")
 ]
 ```
 
 Or add it directly in Xcode:
 1. Go to File > Add Packages...
-2. Enter the repository URL: `https://github.com/yourusername/DicyaninEntity.git`
+2. Enter the repository URL: `https://github.com/hunterh37/DicyaninEntity.git`
 3. Click Add Package
 
 ## Usage
