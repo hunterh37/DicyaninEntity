@@ -98,9 +98,7 @@ public struct DicyaninEntityConfiguration {
     public let interaction: ModelInteraction?
     public let interactionType: InteractionType
     public var anchoring: ModelAnchoring?
-    public var entityIdentifier: EntityIdentifierComponent?
     public var particleComponent: ParticleEmitterComponent?
-    public var wanderComponent: WanderAimlesslyComponent?
     
     public init(
         name: String,
@@ -114,9 +112,7 @@ public struct DicyaninEntityConfiguration {
         interaction: ModelInteraction? = nil,
         interactionType: InteractionType = .none,
         anchoring: ModelAnchoring? = nil,
-        entityIdentifier: EntityIdentifierComponent? = nil,
         particleComponent: ParticleEmitterComponent? = nil,
-        wanderComponent: WanderAimlesslyComponent? = nil
     ) {
         self.name = name
         self.position = position
@@ -129,9 +125,7 @@ public struct DicyaninEntityConfiguration {
         self.interaction = interaction
         self.interactionType = interactionType
         self.anchoring = anchoring
-        self.entityIdentifier = entityIdentifier
         self.particleComponent = particleComponent
-        self.wanderComponent = wanderComponent
     }
 }
 
@@ -149,46 +143,6 @@ public extension DicyaninEntity {
         // Add anchoring if present
         if let anchoring = config.anchoring {
             self.components.set(AnchoringComponent(anchoring.target, trackingMode: anchoring.trackingMode))
-        }
-        
-        // Handle animation
-        if config.playAnimation {
-            if let anim = self.availableAnimations.first {
-                let animationController = self.playAnimation(anim.repeat())
-                animationController?.resume()
-            }
-        }
-        
-        // Add custom animation if present
-        if let animation = config.animation {
-            switch animation.type {
-            case .bounce(let height, let duration):
-                let animation = AnimationResource.generate(with: AnimationDefinition(
-                    name: "bounce",
-                    duration: duration,
-                    timing: .easeInOut,
-                    repeatMode: .repeat,
-                    translations: [
-                        AnimationTranslation(time: 0, value: .zero),
-                        AnimationTranslation(time: duration/2, value: SIMD3<Float>(x: 0, y: height, z: 0)),
-                        AnimationTranslation(time: duration, value: .zero)
-                    ]
-                ))
-                self.playAnimation(animation)
-                
-            case .spin(let speed, let axis):
-                let animation = AnimationResource.generate(with: AnimationDefinition(
-                    name: "spin",
-                    duration: 1.0,
-                    timing: .linear,
-                    repeatMode: .repeat,
-                    rotations: [
-                        AnimationRotation(time: 0, value: simd_quatf(angle: 0, axis: axis)),
-                        AnimationRotation(time: 1.0, value: simd_quatf(angle: .pi * 2, axis: axis))
-                    ]
-                ))
-                self.playAnimation(animation)
-            }
         }
         
         // Add collision if present
@@ -232,20 +186,8 @@ public extension DicyaninEntity {
             }
         }
         
-        // Add additional components
-        if let entityIdentifier = config.entityIdentifier {
-            self.components.set(entityIdentifier)
-        }
-        
         if let particleComponent = config.particleComponent {
             self.components.set(particleComponent)
-        }
-        
-        if var wanderComponent = config.wanderComponent {
-            var motion = MotionComponent()
-            motion.enabled = true
-            self.components.set(motion)
-            self.components.set(wanderComponent)
         }
     }
     
@@ -257,8 +199,10 @@ public extension DicyaninEntity {
             throw NSError(domain: "DicyaninEntity", code: 1, userInfo: [NSLocalizedDescriptionKey: "Failed to load model: \(config.name)"])
         }
         
-        let entity = DicyaninEntity(modelComponent: modelEntity.modelComponent)
+        // Create entity with the model entity
+        let entity = DicyaninEntity()
+        entity.addChild(modelEntity)
         try await entity.configure(with: config)
         return entity
     }
-} 
+}
